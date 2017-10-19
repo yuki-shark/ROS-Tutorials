@@ -24,7 +24,7 @@ def control_motors(vertical, horizontal):
 		urlExecution(3)
 
 def urlExecution(command):
-	ip = 'http://192.168.1.6:81/decoder_control.cgi?loginuse=admin&loginpas=12345&command='
+	ip = 'http://192.168.1.123:81/decoder_control.cgi?loginuse=admin&loginpas=12345&command='
 	oneStep = '&onestep=1&'
 	gibberish = '7485621407675288&_='
 	timeStamp = int(time.time())*1000
@@ -35,8 +35,8 @@ def urlExecution(command):
 def callback(data):
 	rospy.loginfo(data)
 	rospy.loginfo('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-	horizontal = data.axes[4]
-	vertical = data.axes[5]
+	horizontal = data.axes[0]
+	vertical = data.axes[1]
 	control_motors(vertical,horizontal)
 		
 #	rospy.loginfo('X: ' + str(data.data[9]))
