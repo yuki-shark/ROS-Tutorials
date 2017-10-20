@@ -2,7 +2,7 @@
 import rospy
 from sensor_msgs.msg import Joy
 import urllib2
-import time 
+import time
 import cv2
 
 flag = -1
@@ -55,13 +55,14 @@ def control_motors(vertical, horizontal):
                         flag = 5
                 elif(bf_flag == 6):
                         flag = 7
-        rospy.loginfo('==============================================================')
+        # rospy.loginfo('==============================================================')
         if(flag==bf_flag):
+                pass
                 # _isSleep = 1
                 # time.sleep(0.1)
                 # _isSleep = 0
-                rospy.loginfo('sleep')
-                rospy.loginfo(flag)
+                # rospy.loginfo('sleep')
+                # rospy.loginfo(flag)
         elif(flag>=0):
                 urlExecution(flag)
                 # if(flag==0):
@@ -84,8 +85,8 @@ def control_motors(vertical, horizontal):
                 rospy.loginfo(flag)
 
 def urlExecution(command):
-	ip = 'http://192.168.1.6:81/decoder_control.cgi?loginuse=admin&loginpas=12345&command='
-	oneStep = '&onestep=1&'
+	ip = 'http://192.168.1.123:81/decoder_control.cgi?loginuse=admin&loginpas=12345&command='
+	oneStep = '&onestep=0&'
 	gibberish = '7485621407675288&_='
 	timeStamp = int(time.time())*1000
 	fullURL = ip+str(command)+oneStep+str(timeStamp)+'.49641236611690986&_='+str(timeStamp)
@@ -95,17 +96,17 @@ def urlExecution(command):
 def callback(data):
 	# rospy.loginfo(data)
 	# rospy.loginfo('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-	horizontal = data.axes[0]
-	vertical = data.axes[1]
+	horizontal = data.axes[1]
+	vertical = data.axes[0]
 	control_motors(vertical,horizontal)
-        rospy.loginfo(horizontal)
-        rospy.loginfo(vertical)
-		
+        # rospy.loginfo(horizontal)
+        # rospy.loginfo(vertical)
+
 #	rospy.loginfo('X: ' + str(data.data[9]))
 #	rospy.loginfo('Y: ' + str(data.data[10]))
 #	control_motors(error_x,error_y);
 
-    
+
 def listener():
     # In ROS, nodes are uniquely named. If two nodes with the same
     # node are launched, the previous one is kicked off. The
