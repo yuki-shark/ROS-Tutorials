@@ -13,6 +13,37 @@ bf_vertical_flag = False
 control_flag = False
 bf_control_flag = False
 
+zero_flag = [0,0,0,0,0,0,0,0]
+flag = [0,0,0,0,0,0,0,0]
+bf_flag = [0,0,0,0,0,0,0,0]
+
+def abs(num):
+        if num<0:
+                num *= -1
+        return num
+
+def generate_flag(vertical, horizontal):
+        bf_flag = flag
+        flag = zero_flag
+        if(horizontal>0 && abs(horizontal)>abs(vertical)):
+                flag[0] = 1
+        elif(horizontal<0 && abs(horizontal)>abs(vertical)):
+                flag[2] = 1
+        elif(vertical>0 && abs(vertical)>abs(horizontal)):
+                flag[4] = 1
+        elif(vertical<0 && abs(vertical)>abs(horizontal)):
+                flag[6] = 1
+        else:
+                if(bf_flag[0]==1):
+                        flag[1] = 1
+                elif(bf_flag[2]==1):
+                        flag[3] = 1
+                elif(bf_flag[4]==1):
+                        flag[5] = 1
+                elif(bf_flag[6]==1):
+                        flag[7] = 1
+
+
 def control_motors(vertical, horizontal):
         if(!bf_control_flag && control_flag):
                 if(horizontal>0):
