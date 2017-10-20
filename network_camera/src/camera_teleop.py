@@ -5,23 +5,46 @@ import urllib2
 import time 
 import cv2
 
+horizontal_flag = False
+vertical_flag = False
+bf_horizontal_flag = False
+bf_vertical_flag = False
+
+control_flag = False
+bf_control_flag = False
+
 def control_motors(vertical, horizontal):
-	if(horizontal>0):
-		urlExecution(4)
-		time.sleep(0.1)
-		urlExecution(5)
-	elif(horizontal<0):
-		urlExecution(6)
-		time.sleep(0.1)
-		urlExecution(7)
-	if(vertical>0):
-		urlExecution(0)
-		time.sleep(0.1)
-		urlExecution(1)
-	elif(vertical<0):
-		urlExecution(2)
-		time.sleep(0.1)
-		urlExecution(3)
+        if(!bf_control_flag && control_flag):
+                if(horizontal>0):
+                        urlExecution(4)
+                        time.sleep(0.1)
+                elif(horizontal<0):
+                        urlExecution(6)
+                        time.sleep(0.1)
+                if(vertical>0):
+                        urlExecution(0)
+                        time.sleep(0.1)
+                elif(vertical<0):
+                        urlExecution(2)
+                        time.sleep(0.1)
+        if(bf_control_flag && control_flag):
+               i f(horizontal>0):
+                        time.sleep(0.1)
+                elif(horizontal<0):
+                        time.sleep(0.1)
+                if(vertical>0):
+                        time.sleep(0.1)
+                elif(vertical<0):
+                        time.sleep(0.1)
+        if(bf_control_flag && !control_flag):
+        	if(bf_horizontal>0):
+                        urlExecution(5)
+                elif(bf_horizontal<0):
+                        urlExecution(7)
+                if(bf_vertical>0):
+                        urlExecution(1)
+                elif(bf_vertical<0):
+                        urlExecution(3)
 
 def urlExecution(command):
 	ip = 'http://192.168.1.6:81/decoder_control.cgi?loginuse=admin&loginpas=12345&command='
@@ -35,9 +58,23 @@ def urlExecution(command):
 def callback(data):
 	rospy.loginfo(data)
 	rospy.loginfo('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-	horizontal = data.axes[4]
-	vertical = data.axes[5]
+	horizontal = data.axes[0]
+	vertical = data.axes[1]
+        # if(horizontal == 0.0):
+        #         horizontal_flag = False
+        # else:
+        #         horizontal_flag = True
+        # if(vertical == 0.0):
+        #         vertical_flag = False
+        # else:
+        #         vertical_flag = True
+        bf_control_flag = control_flag
+        if(control == 0.0 && vertical == 0.0):
+                control_flag = False
+        else:
+                control_flag = True
 	control_motors(vertical,horizontal)
+        
 		
 #	rospy.loginfo('X: ' + str(data.data[9]))
 #	rospy.loginfo('Y: ' + str(data.data[10]))
