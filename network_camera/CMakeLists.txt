@@ -12,7 +12,7 @@ catkin_package()
 include_directories(${catkin_INCLUDE_DIRS})
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-install(PROGRAMS ui.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(PROGRAMS src/ui.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Declare a cpp executable
 add_executable(network_streamer src/network_streamer.cpp)
@@ -20,3 +20,6 @@ add_executable(network_streamer src/network_streamer.cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(network_streamer ${catkin_LIBRARIES})
 target_link_libraries(network_streamer ${OpenCV_LIBRARIES})
+
+add_executable(key_teleop src/keyboard_input2.cpp)
+target_link_libraries(key_teleop ${catkin_LIBRARIES})

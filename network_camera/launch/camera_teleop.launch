@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find ps3joy)/launch/ps3.launch" />
+  <node pkg="network_camera" name="camera_teleop" type="camera_teleop.py" output="screen"/>
+</launch>
