@@ -45,16 +45,21 @@ def control_motors(vertical, horizontal):
         if(flag==bf_flag):
                 pass
         elif(flag>=0):
-                urlExecution(flag)
+                urlExecution(flag, -1, -1)
                 rospy.loginfo("send URL")
                 rospy.loginfo(flag)
 
-def urlExecution(command):
-	ip = 'http://192.168.1.123:81/decoder_control.cgi?loginuse=admin&loginpas=12345&command='
-	oneStep = '&onestep=0&'
-	gibberish = '7485621407675288&_='
+def urlExecution(command, param, value):
 	timeStamp = int(time.time())*1000
-	fullURL = ip+str(command)+oneStep+str(timeStamp)+'.49641236611690986&_='+str(timeStamp)
+        if(command != -1):
+                ip = 'http://192.168.1.123:81/decoder_control.cgi?loginuse=admin&loginpas=12345&command='
+                oneStep = '&onestep=0&'
+                gibberish = '7485621407675288&_='
+                fullURL = ip+str(command)+oneStep+str(timeStamp)+'.49641236611690986&_='+str(timeStamp)
+        else:
+                ip = 'http://192.168.1.123:81/camera_control.cgi?loginuse=admin&loginpas=12345&param='
+                gibberish = '7485621407675288&_='
+                fullURL = ip+str(param)+'&value='+str(value)+'&'+str(timeStamp)+'.49641236611690986&_='+str(timeStamp)
         rospy.loginfo(fullURL)
 	response = urllib2.urlopen(fullURL)
 
@@ -64,6 +69,7 @@ def callback(data):
 	horizontal = data.axes[2]
 	vertical = data.axes[3]
 	control_motors(vertical,horizontal)
+
         # rospy.loginfo(horizontal)
         # rospy.loginfo(vertical)
 
@@ -81,6 +87,13 @@ def listener():
     rospy.init_node('object_tracking', anonymous=True)
 
     rospy.Subscriber("/joy", Joy, callback)
+
+    # set FrameRate
+    rospy.loginfo("set FrameRate")
+    urlExecution(-1, 6, 30)
+    # set PTZ speed
+    rospy.loginfo("set PTZ speed")
+    urlExecution(-1, 100, 10)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
