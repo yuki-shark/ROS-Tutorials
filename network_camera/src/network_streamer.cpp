@@ -53,7 +53,7 @@ int main(int argc, char** argv){
     networkCamera.port = "81";
     networkCamera.streamURL = "/videostream.cgi?loginuse=admin&loginpas=12345&dummy=param.mjpg";
 
-    cv::namedWindow("Network Stream",1);
+    // cv::namedWindow("Network Stream",1);
     std::string fullURL = networkCamera.ip + ":" + networkCamera.port + networkCamera.streamURL;
     std::cout<<"URL to stream from: "<<fullURL<<std::endl;
     cv::VideoCapture capture(fullURL);
@@ -80,9 +80,9 @@ int main(int argc, char** argv){
     	else{
     		rosImage.image = frame.clone();
 			imagePublisher.publish(rosImage.toImageMsg());
-			cv::imshow("Network Stream",frame);
-			if(cv::waitKey(30) >= 0)
-				break;
+			// cv::imshow("Network Stream",frame);
+			// if(cv::waitKey(30) >= 0)
+			// 	break;
     	}
     	ros::spinOnce();
 	}
