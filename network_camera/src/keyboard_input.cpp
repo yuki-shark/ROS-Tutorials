@@ -116,8 +116,8 @@ void TurtlebotTeleop::publish(double horizontal, double vertical)
   // vel.linear.x = l_scale_*linear;
 
   sensor_msgs::Joy key;
-  key.axis[4] = horizontal;
-  key.axis[5] = vertical;
+  key.axes[2] = horizontal;
+  key.axes[3] = vertical;
 
   key_pub_.publish(key);
 
