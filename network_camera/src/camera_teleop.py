@@ -51,23 +51,27 @@ def control_motors(vertical, horizontal):
 
 def urlExecution(command, param, value):
 	timeStamp = int(time.time())*1000
-        if(command != -1):
+        if (command == -1):
+                ip = 'http://192.168.1.123:81/camera_control.cgi?loginuse=admin&loginpas=12345&param='
+                gibberish = '7485621407675288&_='
+                fullURL = ip+str(param)+'&value='+str(value)+'&'+str(timeStamp)+'.49641236611690986&_='+str(timeStamp)
+        elif (command == 1):
+                ip = 'http://192.168.1.123:81/get_camera_params.cgi?loginuse=admin&loginpas=12345&'
+                fullURL = ip + str(timeStamp) + '&_=' + str(timeStamp)
+        else:
                 ip = 'http://192.168.1.123:81/decoder_control.cgi?loginuse=admin&loginpas=12345&command='
                 oneStep = '&onestep=0&'
                 gibberish = '7485621407675288&_='
                 fullURL = ip+str(command)+oneStep+str(timeStamp)+'.49641236611690986&_='+str(timeStamp)
-        else:
-                ip = 'http://192.168.1.123:81/camera_control.cgi?loginuse=admin&loginpas=12345&param='
-                gibberish = '7485621407675288&_='
-                fullURL = ip+str(param)+'&value='+str(value)+'&'+str(timeStamp)+'.49641236611690986&_='+str(timeStamp)
+
         rospy.loginfo(fullURL)
 	response = urllib2.urlopen(fullURL)
 
 def callback(data):
 	# rospy.loginfo(data)
 	# rospy.loginfo('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-	horizontal = data.axes[2]
-	vertical = data.axes[3]
+        horizontal = (1 - data.axes[14] - (1 - data.axes[15])) / 2 # 14: L, 15: R
+        vertical = (1 - data.axes[8] - (1 - data.axes[10])) / 2 # 8: Upper, 10: Lower
 	control_motors(vertical,horizontal)
 
         # rospy.loginfo(horizontal)
@@ -86,14 +90,21 @@ def listener():
     # run simultaneously.
     rospy.init_node('object_tracking', anonymous=True)
 
-    rospy.Subscriber("/joy", Joy, callback)
+    rospy.Subscriber("/joy", Joy, callback, queue_size=2)
 
+    # set hz
+    rospy.loginfo("set Hz")
+    urlExecution(-1, 3, 0)
+    # set qvga
+    rospy.loginfo("set QVGA")
+    urlExecution(-1, 0, 1)
+    urlExecution(1, 0, 0)
     # set FrameRate
     rospy.loginfo("set FrameRate")
-    urlExecution(-1, 6, 30)
+    urlExecution(-1, 6, 10)
     # set PTZ speed
     rospy.loginfo("set PTZ speed")
-    urlExecution(-1, 100, 10)
+    urlExecution(-1, 100, 7)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

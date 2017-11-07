@@ -49,7 +49,7 @@ public:
   void watchdog();
 
 private:
-  
+
   ros::NodeHandle nh_,ph_;
   double vertical_, horizontal_;
   ros::Time first_publish_;
@@ -58,7 +58,7 @@ private:
   ros::Publisher key_pub_;
   void publish(double, double);
   boost::mutex publish_mutex_;
-  
+
 };
 
 TurtlebotTeleop::TurtlebotTeleop():
@@ -94,15 +94,15 @@ int main(int argc, char** argv)
   signal(SIGINT,quit);
 
   boost::thread my_thread(boost::bind(&TurtlebotTeleop::keyLoop, &turtlebot_teleop));
-  
-  
+
+
   ros::Timer timer = n.createTimer(ros::Duration(0.1), boost::bind(&TurtlebotTeleop::watchdog, &turtlebot_teleop));
 
   ros::spin();
 
   my_thread.interrupt() ;
   my_thread.join() ;
-      
+
   return(0);
 }
 
@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 void TurtlebotTeleop::watchdog()
 {
   boost::mutex::scoped_lock lock(publish_mutex_);
-  if ((ros::Time::now() > last_publish_ + ros::Duration(0.15)) && 
+  if ((ros::Time::now() > last_publish_ + ros::Duration(0.15)) &&
       (ros::Time::now() > first_publish_ + ros::Duration(0.50)))
     publish(0, 0);
 }
@@ -119,11 +119,11 @@ void TurtlebotTeleop::keyLoop()
 {
   char c;
 
-  // get the console in raw mode                                                              
+  // get the console in raw mode
   tcgetattr(kfd, &cooked);
   memcpy(&raw, &cooked, sizeof(struct termios));
   raw.c_lflag &=~ (ICANON | ECHO);
-  // Setting a new line, then end of file                         
+  // Setting a new line, then end of file
   raw.c_cc[VEOL] = 1;
   raw.c_cc[VEOF] = 2;
   tcsetattr(kfd, TCSANOW, &raw);
@@ -136,7 +136,7 @@ void TurtlebotTeleop::keyLoop()
   // ros::Rate loop = 50;
   while (ros::ok())
     {
-      // get the next event from the keyboard  
+      // get the next event from the keyboard
       if(read(kfd, &c, 1) < 0)
         {
           perror("read():");
@@ -146,7 +146,7 @@ void TurtlebotTeleop::keyLoop()
 
       vertical_=horizontal_=0;
       ROS_DEBUG("value: 0x%02X\n", c);
-  
+
       switch(c)
         {
         case KEYCODE_L:
@@ -167,7 +167,7 @@ void TurtlebotTeleop::keyLoop()
           break;
         }
       boost::mutex::scoped_lock lock(publish_mutex_);
-      if (ros::Time::now() > last_publish_ + ros::Duration(1.0)) { 
+      if (ros::Time::now() > last_publish_ + ros::Duration(1.0)) {
         first_publish_ = ros::Time::now();
       }
       last_publish_ = ros::Time::now();
@@ -178,7 +178,7 @@ void TurtlebotTeleop::keyLoop()
   return;
 }
 
-void TurtlebotTeleop::publish(double horizontal, double vertical)  
+void TurtlebotTeleop::publish(double horizontal, double vertical)
 {
   sensor_msgs::Joy key;
   // key.axes[4] = a_scale_*horizontal;
@@ -188,14 +188,12 @@ void TurtlebotTeleop::publish(double horizontal, double vertical)
   key.axes.resize(6);
   key.axes[0] = 0.0;
   key.axes[1] = 0.0;
-  key.axes[2] = 0.0;
-  key.axes[3] = 0.0;
-  key.axes[4] = horizontal;
-  key.axes[5] = vertical;
+  key.axes[2] = horizontal;
+  key.axes[3] = vertical;
+  key.axes[4] = 0.0;
+  key.axes[5] = 0.0;
 
   key_pub_.publish(key);
 
   return;
 }
-
-
